@@ -9,7 +9,7 @@ activation function:
 
 layer:
     input: 2
-    hidden: 5
+    hidden: 4
     output: 1
 
 loss:
@@ -116,7 +116,7 @@ def main():
                 break
         epoch += 1
     else:
-        print "LERNING FAILED ... TRY ONCE MORE, PLEASE"
+        print "LEARNING FAILED ... TRY ONCE MORE, PLEASE"
     print
     print "WEIGHT (input -> hidden)"
     print '\n'.join(map(str, bp.w_hi))
