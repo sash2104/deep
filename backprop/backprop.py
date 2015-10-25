@@ -20,8 +20,9 @@ loss:
 
 import math
 import random
+import sys
 
-ERROR_THRESHOLD = 1e-5
+ERROR_THRESHOLD = 1e-4
 MAX_EPOCH = 100000
 
 def sigmoid(x):
@@ -42,26 +43,35 @@ def squareError(ys, ts):
     return error
 
 class BackPropagation:
-    def __init__(self, num_hidden=4, learning_rate=1.0):
+    def __init__(self, num_hidden=4, learning_rate=1.0, bias=False):
         self.lr = learning_rate
         self.num_input = 2
         self.num_hidden = num_hidden
         self.num_output = 1
+        self.bias_offset = 1 if bias else 0
+        # self.initWeight(self.num_input, self.num_hidden)
+        self.initWeight(self.num_hidden, self.num_output)
+
         # weight from input to hidden
-        self.w_hi = [[random.uniform(0.0, 1.0) for i in xrange(self.num_input)]
-                      for h in xrange(num_hidden)]
+        self.w_hi = self.initWeight(self.num_input, self.num_hidden)
         # weight from hidden to output
-        self.w_oh = [[random.uniform(0.0, 1.0) for h in xrange(self.num_hidden)]
-                      for o in xrange(self.num_output)]
+        self.w_oh = self.initWeight(self.num_hidden, self.num_output)
         # outputs of hidden layer
         self.y_h = [0.0 for _ in xrange(self.num_hidden)]
         # outputs of output layer
         self.y_o = [0.0 for _ in xrange(self.num_output)]
 
+    def initWeight(self, num_input, num_output):
+        w = []
+        for o in xrange(num_output):
+            w.append([random.uniform(0.0, 1.0)
+                      for _ in xrange(num_input + self.bias_offset)])
+        return w
+
     def forward(self, xs, ys, w_yx, output=False):
         assert(len(ys) == len(w_yx))
-        len_y = len(ys)
-        for i in xrange(len_y):
+        xs = [1] * self.bias_offset + xs
+        for i in xrange(len(ys)):
             ys[i] = dot(w_yx[i], xs)
             if not output:
                 ys[i] = sigmoid(ys[i])
